@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xhxy.Mapper.CourseMapper">
+    <resultMap id="courseResultMap" type="com.xhxy.entity.Course">
+        <id property="id" column="id" jdbcType="BIGINT" javaType="java.lang.Long" />
+        <result property="name" column="name" jdbcType="VARCHAR" javaType="java.lang.String" />
+        <result property="description" column="description" jdbcType="VARCHAR" javaType="java.lang.String" />
+        <association property="teacher" column="teacher_id" jdbcType="INTEGER" javaType="com.xhxy.entity.Teacher"
+                     select="com.xhxy.Mapper.TeacherMapper.getByTeacherId" />
+    </resultMap>
+    <resultMap id="courseResultMapStudent" type="com.xhxy.entity.Course">
+        <id property="id" column="id" jdbcType="BIGINT" javaType="java.lang.Long" />
+        <result property="name" column="name" jdbcType="VARCHAR" javaType="java.lang.String" />
+        <result property="description" column="description" jdbcType="VARCHAR" javaType="java.lang.String" />
+        <association property="teacher" column="teacher_id" jdbcType="INTEGER" javaType="com.xhxy.entity.Teacher"
+                     select="com.xhxy.Mapper.TeacherMapper.getByTeacherId" />
+        <collection property="chapters" column="id" jdbcType="INTEGER" javaType="java.util.List" ofType="com.xhxy.entity.Chapter"
+                    select="com.xhxy.Mapper.ChapterMapper.getChaptersByCourseId" />
+    </resultMap>
+    <resultMap id="courseResultMapTeacher" type="com.xhxy.entity.Course">
+        <id property="id" column="id" jdbcType="BIGINT" javaType="java.lang.Long" />
+        <result property="name" column="name" jdbcType="VARCHAR" javaType="java.lang.String" />
+        <result property="description" column="description" jdbcType="VARCHAR" javaType="java.lang.String" />
+<!--        <association property="teacher" column="teacher_id" jdbcType="INTEGER" javaType="com.xhxy.entity.Teacher"-->
+<!--                     select="com.xhxy.Mapper.TeacherMapper.getByTeacherId" />-->
+        <collection property="chapters" column="id" jdbcType="INTEGER" javaType="java.util.List" ofType="com.xhxy.entity.Chapter"
+                    select="com.xhxy.Mapper.ChapterMapper.getChaptersByCourseId" />
+    </resultMap>
+
+    <select id="getAllCourses" resultMap="courseResultMap">
+        SELECT * FROM course
+    </select>
+
+
+    <select id="getAllCoursesByStu" resultMap="courseResultMapStudent">
+        SELECT c.* FROM course c
+                            JOIN stu_course sc ON c.id = sc.course_id
+        WHERE sc.stu_id = #{studentId}
+    </select>
+    <select id="getAllCoursesByTeacher" resultMap="courseResultMapTeacher">
+        SELECT * FROM course
+        WHERE teacher_id = #{teacherId}
+    </select>
+
+
+    <select id="getAllCoursesByStuSimple" resultMap="courseResultMap">
+        SELECT c.* FROM course c
+                            JOIN stu_course sc ON c.id = sc.course_id
+        WHERE sc.stu_id = #{studentId}
+    </select>
+    <select id="getAllCoursesByTeacherSimple" resultType="com.xhxy.entity.Course">
+        SELECT id, name, description, exerciseNumber FROM course
+        WHERE teacher_id = #{teacherId}
+    </select>
+
+    <select id="getCourseById" resultType="com.xhxy.entity.Course">
+        select * from course
+        where id = #{id}
+    </select>
+
+    <insert id="insertCourse" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO course (name, description,teacher_id)
+        VALUES (#{name}, #{description},#{teacher.id})
+    </insert>
+
+    <update id="updateCourse">
+        UPDATE course
+        SET name = #{name}, description = #{description}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteCourse">
+        DELETE FROM course WHERE id = #{id}
+    </delete>
+
+</mapper>

@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xhxy.Mapper.ExerciseMapper">
+
+    <insert id="insertMultipleChoiceExercise" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO exercise (section_id, type, content, correct_answer, difficulty_level)
+        VALUES (#{section.id}, '选择题', #{content}, #{correctAnswer}, #{difficultyLevel})
+    </insert>
+
+    <insert id="insertProgrammingExercise" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO exercise (section_id, type, content, difficulty_level)
+        VALUES (#{section.id}, '编程题', #{content}, #{difficultyLevel})
+    </insert>
+
+    <insert id="insertExerciseOption">
+        INSERT INTO exercise_option (exercise_id, letter, description)
+        VALUES (#{exerciseId}, #{letter}, #{description})
+    </insert>
+
+    <insert id="insertProgrammingAnswer">
+        INSERT INTO programming_answer (exercise_id, answer)
+        VALUES (#{id}, #{answer})
+    </insert>
+
+    <update id="updateMultipleChoiceExercise">
+        UPDATE exercise
+        SET content = #{content}, correct_answer = #{correctAnswer}, difficulty_level = #{difficultyLevel}
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateProgrammingExercise">
+        UPDATE exercise
+        SET content = #{content}, difficulty_level = #{difficultyLevel}
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateProgrammingAnswer">
+        UPDATE programming_answer
+        SET answer = #{answer}
+        WHERE exercise_id = #{id}
+    </update>
+
+
+
+    <delete id="deleteExerciseOptions">
+        DELETE FROM exercise_option WHERE exercise_id = #{exerciseId}
+    </delete>
+
+    <delete id="deleteProgrammingAnswer">
+        DELETE FROM programming_answer WHERE exercise_id = #{exerciseId}
+    </delete>
+
+    <delete id="deleteExercise">
+        DELETE FROM exercise WHERE id = #{exerciseId}
+    </delete>
+
+
+    <select id="getExercisesBySectionId" resultMap="exerciseResultMap">
+        SELECT e.*, s.*, pa.answer
+        FROM exercise e
+                 LEFT JOIN section s ON e.section_id = s.id
+                 LEFT JOIN programming_answer pa ON e.id = pa.exercise_id
+        WHERE e.section_id = #{sectionId}
+    </select>
+
+    <select id="getExerciseOptions" resultType="com.xhxy.entity.ExerciseOption">
+        SELECT * FROM exercise_option WHERE exercise_id = #{exerciseId}
+    </select>
+
+    <select id="getProgrammingAnswer" resultType="string">
+        SELECT answer FROM programming_answer WHERE exercise_id = #{exerciseId}
+    </select>
+
+    <resultMap id="exerciseResultMap" type="com.xhxy.entity.Exercise">
+        <id property="id" column="id"/>
+        <result property="content" column="content"/>
+        <result property="correctAnswer" column="correct_answer"/>
+        <result property="difficultyLevel" column="difficulty_level"/>
+        <result property="createAt" column="created_at"/>
+        <result property="updateAt" column="updated_at"/>
+<!--        <association property="section" column="section_id" javaType="com.xhxy.entity.Section"-->
+<!--                     select="com.xhxy.Mapper.SectionMapper.getSectionById" />-->
+        <discriminator javaType="string" column="type">
+            <case value="选择题" resultMap="multipleChoiceExerciseResultMap"/>
+            <case value="编程题" resultMap="programmingExerciseResultMap"/>
+        </discriminator>
+    </resultMap>
+
+    <resultMap id="multipleChoiceExerciseResultMap" type="com.xhxy.entity.MultipleChoiceExercise" extends="exerciseResultMap">
+        <!-- 定义 MultipleChoiceExercise 的其他属性映射 -->
+
+        <collection property="options" column="id" jdbcType="BIGINT" javaType="java.util.List" ofType="com.xhxy.entity.ExerciseOption"
+                    select="getExerciseOptions" />
+    </resultMap>
+
+    <resultMap id="programmingExerciseResultMap" type="com.xhxy.entity.ProgrammingExercise" extends="exerciseResultMap">
+        <!-- 定义 ProgrammingExercise 的其他属性映射 -->
+
+        <association property="answer" javaType="string" column="id" jdbcType="BIGINT" select="getProgrammingAnswer"/>
+    </resultMap>
+
+
+    <select id="getExerciseById" resultMap="exerciseResultMap">
+        SELECT e.*, s.*, pa.answer
+        FROM exercise e
+                 LEFT JOIN section s ON e.section_id = s.id
+                 LEFT JOIN programming_answer pa ON e.id = pa.exercise_id
+        WHERE e.id = #{id}
+    </select>
+
+    <select id="selectExerciseNumber" resultType="java.lang.Integer">
+        select exerciseNumber from course where id = #{id}
+    </select>
+
+    <update id="updateExerciseNumber">
+        update course
+        set exerciseNumber = #{exerciseNumber}
+        where id = #{courseId}
+    </update>
+
+    <!-- 定义 ExerciseOption 的属性映射 -->
+<!--    <resultMap id="exerciseOptionResultMap" type="com.xhxy.entity.ExerciseOption">-->
+<!--        <id property="id" column="id"/>-->
+<!--        <result property="exerciseId" column="exercise_id"/>-->
+<!--        <result property="letter" column="letter"/>-->
+<!--        <result property="description" column="description"/>-->
+<!--    </resultMap>-->
+    <!-- 定义 ProgrammingAnswer 的属性映射 -->
+<!--    <resultMap id="programmingAnswerResultMap" type="com.xhxy.entity.ProgrammingExercise">-->
+<!--        <id property="id" column="id"/>-->
+<!--        <result property="answer" column="answer"/>-->
+<!--    </resultMap>-->
+
+</mapper>

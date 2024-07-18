@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xhxy.Mapper.FileMapper">
+
+<!--    &lt;!&ndash; FileEntity 的 resultMap 配置 &ndash;&gt;-->
+<!--    <resultMap id="fileEntityMap" type="com.xhxy.entity.FileEntity">-->
+<!--        <id property="id" column="id" />-->
+<!--        <result property="fileName" column="file_name" />-->
+<!--        <result property="fileType" column="file_type" />-->
+<!--        <result property="fileSize" column="file_size" />-->
+<!--        <result property="filePath" column="file_path" />-->
+<!--        <result property="uploadTime" column="upload_time" />-->
+<!--        <result property="file_toText" column="file_toText"/>-->
+<!--        <result property="sectionId" column="section_id"/>-->
+<!--    </resultMap>-->
+<!--    <insert id="insertFile" useGeneratedKeys="true" keyProperty="id">-->
+<!--        INSERT INTO files-->
+<!--        (file_name, file_type, file_size, file_path, upload_time, section_id-->
+<!--        <if test="file_toText != null">, file_toText</if>)-->
+<!--        VALUES-->
+<!--        (#{fileName}, #{fileType}, #{fileSize}, #{filePath}, #{uploadTime}, #{sectionId}-->
+<!--        <if test="file_toText != null">, #{file_toText}</if>)-->
+<!--    </insert>-->
+    <resultMap id="fileEntityMap" type="com.xhxy.entity.FileEntity">
+        <id property="id" column="id"/>
+        <result property="fileName" column="file_name"/>
+        <result property="fileType" column="file_type"/>
+        <result property="fileSize" column="file_size"/>
+        <result property="filePath" column="file_path"/>
+        <result property="uploadTime" column="upload_time"/>
+        <result property="file_toText" column="file_toText"/>
+        <result property="sectionId" column="section_id"/>
+        <result property="fileUrl" column="file_url"/>
+    </resultMap>
+    <insert id="insertFile" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO files (file_name, file_type, file_size, file_path, upload_time, file_toText, section_id,file_url)
+        VALUES (#{fileName}, #{fileType}, #{fileSize}, #{filePath}, #{uploadTime}, #{file_toText}, #{sectionId},#{fileUrl})
+    </insert>
+    <update id="updateFile">
+        UPDATE files
+        SET file_name=#{fileName},file_toText = #{file_toText}
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteFileById">
+        delete from files
+        where id = #{id}
+    </delete>
+
+    <select id="getFilesBySectionAndType" resultMap="fileEntityMap">
+        SELECT * FROM files
+        WHERE section_id = #{sectionId} AND
+        (file_type LIKE CONCAT('%', #{fileType1}, '%')
+            OR file_type LIKE CONCAT('%', #{fileType2}, '%'))
+    </select>
+    <select id="getFileById" resultMap="fileEntityMap">
+        select * from files
+        where id = #{id}
+    </select>
+</mapper>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    <!-- src/main/resources/mapper/SectionMapper.xml -->
+    <mapper namespace="com.xhxy.Mapper.SectionMapper">
+
+    <!-- 定义 Section 对象的 resultMap -->
+    <resultMap id="sectionResultMap" type="com.xhxy.entity.Section">
+        <id property="id" column="id" />
+        <!--<result property="chapter" column="chapter_id" javaType="com.xhxy.entity.Chapter" />-->
+        <result property="name" column="name" />
+        <result property="orderNumber" column="order_number" />
+        <!-- 其他属性映射 -->
+    </resultMap>
+    <insert id="insertSection" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO section (chapter_id, name, order_number)
+        VALUES (#{chapter.id}, #{name}, #{orderNumber})
+    </insert>
+    <update id="updateSection">
+        UPDATE section
+        SET name = #{name}
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteSectionsByChapterId">
+        DELETE FROM section WHERE chapter_id = #{chapterId}
+    </delete>
+    <delete id="deleteSection">
+        DELETE FROM section WHERE id = #{sectionId}
+    </delete>
+
+    <select id="getSectionById" resultMap="sectionResultMap">
+        SELECT * FROM section WHERE id = #{id}
+    </select>
+
+    <select id="selectByChapterId" resultMap="sectionResultMap">
+        select * from section where chapter_id = #{chapterId}
+    </select>
+    <select id="getChapterId" resultType="java.lang.Integer">
+        select chapter_id from section where id = #{sectionId}
+    </select>
+
+</mapper>

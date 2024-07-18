@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xhxy.Mapper.ChapterMapper">
+    <delete id="deleteChapter">
+        DELETE FROM chapter WHERE id = #{chapterId}
+    </delete>
+
+    <insert id="insertChapter" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO chapter (course_id, name, order_number)
+        VALUES (#{course.id}, #{name}, #{orderNumber})
+    </insert>
+
+    <update id="updateChapter">
+        UPDATE chapter
+        SET name = #{name}
+        WHERE id = #{id}
+    </update>
+
+    <select id="getChaptersByCourseId" resultMap="chapterResultMap">
+        SELECT * FROM chapter WHERE course_id = #{courseId}
+    </select>
+
+    <select id="getCourseId" resultType="java.lang.Integer">
+        select course_id from chapter where id = #{chapterId}
+    </select>
+
+    <resultMap id="chapterResultMap" type="com.xhxy.entity.Chapter">
+        <id property="id" column="id" jdbcType="BIGINT" javaType="java.lang.Long" />
+        <result property="name" column="name" jdbcType="VARCHAR" javaType="java.lang.String" />
+        <result property="orderNumber" column="order_number" jdbcType="INTEGER" javaType="java.lang.Integer" />
+        <collection property="sections" column="id" jdbcType="INTEGER" javaType="java.util.List" ofType="com.xhxy.entity.Section"
+                    select="com.xhxy.Mapper.SectionMapper.selectByChapterId" />
+    </resultMap>
+</mapper>

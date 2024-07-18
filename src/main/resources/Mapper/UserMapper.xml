@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xhxy.Mapper.UserMapper">
+    <insert id="insertUser" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user (role, number, username, password, email)
+        VALUES (#{role}, #{number}, #{username}, #{password}, #{email})
+    </insert>
+
+    <select id="findUserByCredentials" resultType="com.xhxy.entity.User">
+        SELECT * FROM user
+        WHERE number = #{number} AND username = #{username} AND password = #{password}
+    </select>
+
+    <select id="findUserById" resultType="com.xhxy.entity.User">
+        select * from user
+        WHERE id = #{id}
+    </select>
+</mapper>

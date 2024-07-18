@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xhxy.Mapper.StudentMapper">
+    <insert id="insertStudent" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO student (user_id, name, enrollment_date)
+        VALUES (#{user.id}, #{name}, #{enrollmentDate})
+    </insert>
+    <select id="getByUserId" resultMap="studentMap">
+        select * from student where user_id = #{userId}
+    </select>
+
+    <select id="getByStudentId" resultMap="studentMap1">
+        select * from student where id = #{studentId}
+    </select>
+    <resultMap id="studentMap1" type="com.xhxy.entity.Student">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="enrollmentDate" column="enrollment_date"/>
+    </resultMap>
+
+    <resultMap id="studentMap" type="com.xhxy.entity.Student">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="enrollmentDate" column="enrollment_date"/>
+        <association property="user" column="user_id" javaType="com.xhxy.entity.User"
+                     select="com.xhxy.Mapper.UserMapper.findUserById"/>
+    </resultMap>
+</mapper>

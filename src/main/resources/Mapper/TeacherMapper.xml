@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xhxy.Mapper.TeacherMapper">
+
+    <insert id="insertTeacher" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO teacher (user_id, name)
+        VALUES (#{user.id}, #{name})
+    </insert>
+
+    <select id="getByUserId" resultType="com.xhxy.entity.Teacher">
+        select id,name from teacher where user_id = #{userId}
+    </select>
+
+    <select id="getByTeacherId" resultType="com.xhxy.entity.Teacher">
+        select id,name from teacher where id = #{teacherId}
+    </select>
+</mapper>
